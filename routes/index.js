@@ -63,4 +63,27 @@ router.post('/profile/regist', function (request, response, next) {
 
 });
 
+//목록요청 처리 
+router.get('/profile/list', function (request, response, next) {
+  oracledb.getConnection(pool,function(error,con){
+    if(error){
+        console.log(error);
+    }else{
+      var sql="select * from profile order by profile_id desc";
+      con.execute(sql, function(err, result, fields){
+         if(err){
+            console.log(err);
+         } else{
+            response.writeHead(200,{"Content-Type":"text/json"});
+            response.end(JSON.stringify({
+              rows:result.rows
+            }));
+         }
+         con.close(function(e){});
+      });
+    }
+  });  
+});
+
+
 module.exports = router;
